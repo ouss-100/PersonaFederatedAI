@@ -10,28 +10,31 @@ db_config = {
 }
 
 
-def insert_data(user_data, personality):
+
+def insert_user(email, name, dominant_personality, personalities):
     try:
         # Connect to MySQL
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
 
+        # Insert user data
         cursor.execute(
-                f"INSERT INTO user (email, name, dominantpersonality) VALUES ({10}, %s, %s, %s)",
-                (user_data['email'], user_data['name'], user_data['dominantpersonality'])
-            )
+            "INSERT INTO user (email, name, dominantpersonality) VALUES (%s, %s, %s)",
+            (email, name, dominant_personality)
+        )
         user_id = cursor.lastrowid  # Get the last inserted user's ID
 
-        cursor.execute(
-                    "INSERT INTO userpersonality (user_id, name, value) VALUES (%s, %s, %s)",
-                    (user_id, personality[0], personality[1])
-                )
-
-        print(f"User created: {user_data['name']} (ID: {user_id})")
+        # Insert personality data
+        for personality in personalities:
+            cursor.execute(
+                "INSERT INTO userpersonality (userId, name, value) VALUES (%s, %s, %s)",  # Use `userId`
+                (user_id, personality[0], personality[1])
+            )
 
         # Commit the transaction
         conn.commit()
 
+        print(f"User created: {name} (ID: {user_id})")
     except mysql.connector.Error as err:
         print(f"Error: {err}")
     finally:
