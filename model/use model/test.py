@@ -20,7 +20,7 @@ install_and_import("requests")
 
 model = joblib.load('model.pkl')
 
-new_data = pandas.DataFrame({
+new_data = pd.DataFrame({
     'gender': ['male'],
     'relationship_status': ['single'],
     'education': ['Bachelor\'s'],
@@ -48,3 +48,6 @@ if response.status_code == 200:
     print("Predictions successfully sent to the server!")
 else:
     print(f"Failed to send predictions: {response.text}")
+
+
+
